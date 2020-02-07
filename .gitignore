@@ -1,1 +1,5 @@
-data/*.mat
+*.mat
+*.asv
+*.fig
+!results/*.mat
+!results/*.fig

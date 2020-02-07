@@ -1,7 +1,7 @@
-function [W, L, DBR] = runGLM(H, xi, threshold, iterationThres, maxIterations, alpha, M1spike, mPFCspike, verbose)
+function [W, L, DBR] = runGLM(H, xi, threshold, iterationThres, maxIterations, alpha, splitFunc, verbose)
 % Train & test GLM
 %% Spike train ensemble & split train/test
-[trainLen,~,testLen,trainX,valX,testX,trainY,valY,testY] = splitData(mPFCspike,M1spike,H);
+[trainLen,~,testLen,trainX,valX,testX,trainY,valY,testY] = splitFunc(H);
 %% Initialize params & variables
 [~, Nx] = size(trainX);
 W = xi / sqrt(Nx) * (2 * rand(1, Nx) - 1);
@@ -43,7 +43,7 @@ if (verbose <= 1)
   plotData(valY(1:10000), valYpre(1:10000), valLambdaYpre(1:10000), LHistory, W)
 end
 if (verbose <= 2)
-  disp(['Train Complete...L:',num2str(L), 9, '...H:', num2str(H), 9, '...xi:',num2str(xi), 9, '...alpha:',num2str(alpha)]);
+  disp([num2str(iter),'/',num2str(maxIterations),':Train Complete...L:',num2str(L), 9, '...H:', num2str(H), 9, '...xi:',num2str(xi), 9, '...alpha:',num2str(alpha)]);
 end
 
 %% Test data
@@ -62,6 +62,6 @@ while(stopIdx<testLen)
 end
 DBR = DBR/(seg-1);
 if (verbose <= 2)
-  disp(['   Test Complete...L:',num2str(L), 9, '...DBR:',num2str(DBR)]);
+  disp(['      Test Complete...L:',num2str(L), 9, '...DBR:',num2str(DBR)]);
 end
 end
