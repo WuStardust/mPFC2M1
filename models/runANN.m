@@ -2,7 +2,7 @@ function [W,L,DBR,Whis] = runANN(H, Nz, xi1, xi2, mu, threshold, ...
   iterationThres, maxIterations, alpha, splitFunc, verbose)
 % Train & test ANN
 %% Spike train ensemble & split train/test
-[trainLen,valLen,~,trainX,valX,testX,trainY,valY,testY] = splitFunc(H);
+[trainLen,valLen,testLen,trainX,valX,testX,trainY,valY,testY] = splitFunc(H);
 %% Initialize params & variables
 [~, Nx] = size(trainX);
 w     = xi2 / sqrt(Nx) * (2*rand(Nx, Nz  ) - 1);
