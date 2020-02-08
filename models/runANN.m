@@ -25,6 +25,7 @@ valLambdaYpre= ANNmodel(valX, W, H, Nx, Nz);
 Lval = logLikelyhood(valY, valLambdaYpre, alpha*norm(W, 1));
 LvalHis(iter:end) = Lval;
 LvalBest = Lval;
+bestIter = iter;
 
 seg = 1;
 startIdx = 1;
@@ -130,6 +131,10 @@ while (iter<maxIterations)
   % validate
   [valLambdaYpre, valYpre] = ANNmodel(valX, W, H, Nx, Nz);
   LvalNew = logLikelyhood(valY, valLambdaYpre, alpha*norm(W, 1));
+  if (LvalBest <= LvalNew)
+    LvalBest = LvalNew;
+    bestIter = iter;
+  end
   LvalBest = max(LvalBest, LvalNew);
   % L on validation set change too little, or drop too much
   if (abs(LvalNew-Lval)<threshold || LvalNew-LvalBest<-50)
@@ -166,7 +171,7 @@ if (verbose <= 2)
     ':Train Complete...Lval:',num2str(Lval), 9, '...H:', num2str(H), 9, ...
     '...alpha:',num2str(alpha), 9, '...mu=',num2str(mu)]);
 end
-
+W = Whis(bestIter,:);
 %% Test data
 testLambdaYpre = ANNmodel(testX, W, H, Nx, Nz);
 L = logLikelyhood(testY, testLambdaYpre, alpha*norm(W, 1));
