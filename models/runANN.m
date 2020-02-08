@@ -24,6 +24,7 @@ LtrainHis(iter:end) = Ltrain;
 valLambdaYpre= ANNmodel(valX, W, H, Nx, Nz);
 Lval = logLikelyhood(valY, valLambdaYpre, alpha*norm(W, 1));
 LvalHis(iter:end) = Lval;
+LvalBest = Lval;
 
 seg = 1;
 startIdx = 1;
@@ -45,7 +46,6 @@ while (iter<maxIterations)
   end
 
   % BP
-  tic
   theta = W(Nx*Nz+1:Nx*Nz+Nz);
   % ----- Gradient
   dSpikeLambdaY = trainY - trainLambdaYpre;
@@ -88,7 +88,6 @@ while (iter<maxIterations)
   Hewtheta(Nz+1, :) = reshape((- thetaYZPro' * trainX)', 1, Nz*Nx);
   
   Hessian = [Hew2, Hewtheta'; Hewtheta, Hetheta2];
-  toc
   if (rcond(Hessian) < 1e-15 || sum(sum(isnan(Hessian))) == 1)
     disp('Error: BAD He!');
   end
@@ -131,8 +130,9 @@ while (iter<maxIterations)
   % validate
   [valLambdaYpre, valYpre] = ANNmodel(valX, W, H, Nx, Nz);
   LvalNew = logLikelyhood(valY, valLambdaYpre, alpha*norm(W, 1));
-  % L on validation set change too little
-  if (abs(LvalNew-Lval)<threshold || LvalNew-Lval<-50)
+  LvalBest = max(LvalBest, LvalNew);
+  % L on validation set change too little, or drop too much
+  if (abs(LvalNew-Lval)<threshold || LvalNew-LvalBest>-50)
     valConverge = valConverge + 1;
   else
     valConverge = 0;
