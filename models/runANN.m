@@ -1,8 +1,8 @@
-function [W,Whis] = runANN(H, Nz, xi1, xi2, mu, threshold, ...
+function [W,L,DBR,Whis] = runANN(H, Nz, xi1, xi2, mu, threshold, ...
   iterationThres, maxIterations, alpha, splitFunc, verbose)
 % Train & test ANN
 %% Spike train ensemble & split train/test
-[trainLen,valLen,~,trainX,valX,~,trainY,valY,~] = splitFunc(H);
+[trainLen,valLen,~,trainX,valX,testX,trainY,valY,testY] = splitFunc(H);
 %% Initialize params & variables
 [~, Nx] = size(trainX);
 w     = xi2 / sqrt(Nx) * (2*rand(Nx, Nz  ) - 1);
@@ -165,5 +165,24 @@ if (verbose <= 2)
   disp([num2str(iter-1),'/',num2str(maxIterations), ...
     ':Train Complete...Lval:',num2str(Lval), 9, '...H:', num2str(H), 9, ...
     '...alpha:',num2str(alpha), 9, '...mu=',num2str(mu)]);
+end
+
+%% Test data
+testLambdaYpre = ANNmodel(testX, W, H, Nx, Nz);
+L = logLikelyhood(testY, testLambdaYpre, alpha*norm(W, 1));
+
+seg = 1;
+startIdx = 1;
+stopIdx  = 10000;
+DBR = 0;
+while(stopIdx<testLen)
+  DBR      = DBR + dbr(testLambdaYpre(startIdx:stopIdx)', testY(startIdx:stopIdx)');
+  seg      = seg + 1;
+  startIdx = 5000*(seg-1)+1;
+  stopIdx  = 5000*(seg+1);
+end
+DBR = DBR/(seg-1);
+if (verbose <= 2)
+  disp(['      Test Complete...L:',num2str(L), 9, '...DBR:',num2str(DBR)]);
 end
 end
