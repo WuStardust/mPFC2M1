@@ -132,7 +132,7 @@ while (iter<maxIterations)
   LvalNew = logLikelyhood(valY, valLambdaYpre, alpha*norm(W, 1));
   LvalBest = max(LvalBest, LvalNew);
   % L on validation set change too little, or drop too much
-  if (abs(LvalNew-Lval)<threshold || LvalNew-LvalBest>-50)
+  if (abs(LvalNew-Lval)<threshold || LvalNew-LvalBest<-50)
     valConverge = valConverge + 1;
   else
     valConverge = 0;
