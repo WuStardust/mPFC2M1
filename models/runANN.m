@@ -169,7 +169,7 @@ end
 if (verbose <= 2)
   disp([num2str(iter-1),'/',num2str(maxIterations), ...
     ':Train Complete...Lval:',num2str(Lval), 9, '...H:', num2str(H), 9, ...
-    '...alpha:',num2str(alpha), 9, '...mu=',num2str(mu)]);
+    '...Nz:', num2str(Nz), 9, '...alpha:',num2str(alpha), 9, '...mu=',num2str(mu)]);
 end
 W = Whis(bestIter,:);
 %% Test data
