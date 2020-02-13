@@ -18,10 +18,10 @@ Whis(1,:) = W;
 
 %% train ANN
 % forward
-[trainLambdaYpre, ~, trainLambdaZpre] = ANNmodel(trainX, W, H, Nx, Nz);
+[trainLambdaYpre, ~, trainLambdaZpre] = ANNmodel(trainX, W, Nx, Nz);
 Ltrain = logLikelyhood(trainY, trainLambdaYpre, alpha*norm(W, 1));
 LtrainHis(iter:end) = Ltrain;
-valLambdaYpre= ANNmodel(valX, W, H, Nx, Nz);
+valLambdaYpre= ANNmodel(valX, W, Nx, Nz);
 Lval = logLikelyhood(valY, valLambdaYpre, alpha*norm(W, 1));
 LvalHis(iter:end) = Lval;
 LvalBest = Lval;
@@ -98,7 +98,7 @@ while (iter<maxIterations)
     Wnew = W - Grad/(Hessian-mu*eye(size(Hessian)));
 
     % forward
-    [trainLambdaYpre, ~, trainLambdaZpre] = ANNmodel(trainX, Wnew, H, Nx, Nz);
+    [trainLambdaYpre, ~, trainLambdaZpre] = ANNmodel(trainX, Wnew, Nx, Nz);
     Lnew = logLikelyhood(trainY, trainLambdaYpre, alpha*norm(Wnew, 1));
     
     % check L
@@ -129,7 +129,7 @@ while (iter<maxIterations)
   Ltrain = Lnew;
   
   % validate
-  [valLambdaYpre, valYpre] = ANNmodel(valX, W, H, Nx, Nz);
+  [valLambdaYpre, valYpre] = ANNmodel(valX, W, Nx, Nz);
   LvalNew = logLikelyhood(valY, valLambdaYpre, alpha*norm(W, 1));
   if (LvalBest <= LvalNew)
     LvalBest = LvalNew;
@@ -173,7 +173,7 @@ if (verbose <= 2)
 end
 W = Whis(bestIter,:);
 %% Test data
-testLambdaYpre = ANNmodel(testX, W, H, Nx, Nz);
+testLambdaYpre = ANNmodel(testX, W, Nx, Nz);
 L = logLikelyhood(testY, testLambdaYpre, alpha*norm(W, 1));
 
 seg = 1;

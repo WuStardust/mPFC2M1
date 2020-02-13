@@ -1,4 +1,4 @@
-function [lambdaYpredict, spikeYpredict, lambdaZ] = ANNmodel(spikeTrainEnsemble, W, H, Nx, Nz)
+function [lambdaYpredict, spikeYpredict, lambdaZ] = ANNmodel(spikeTrainEnsemble, W, Nx, Nz)
 % ANN model
 precise = 1e-6; % deal with tructed error of matlab
 w = reshape(W(1:Nx*Nz), Nx, Nz)';
