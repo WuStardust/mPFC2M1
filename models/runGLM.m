@@ -1,4 +1,4 @@
-function [W, L, DBR] = runGLM(H, xi, threshold, iterationThres, maxIterations, alpha, splitFunc, verbose)
+function [W, L, DBR, Lval, LHistory] = runGLM(H, xi, threshold, iterationThres, maxIterations, alpha, splitFunc, verbose)
 % Train & test GLM
 %% Spike train ensemble & split train/test
 [trainLen,~,testLen,trainX,valX,testX,trainY,valY,testY] = splitFunc(H);
@@ -45,22 +45,12 @@ end
 if (verbose <= 2)
   disp([num2str(iter),'/',num2str(maxIterations),':Train Complete...L:',num2str(L), 9, '...H:', num2str(H), 9, '...xi:',num2str(xi), 9, '...alpha:',num2str(alpha)]);
 end
-
+Lval = L;
+LHistory = LHistory(1:iter);
 %% Test data
 testLambdaYpre = GLMmodel(testX, W);
 L = logLikelyhood(testY, testLambdaYpre, alpha*norm(W, 1));
-
-seg = 1;
-startIdx = 1;
-stopIdx  = 10000;
-DBR = 0;
-while(stopIdx<testLen)
-  DBR      = DBR + dbr(testLambdaYpre(startIdx:stopIdx)', testY(startIdx:stopIdx)');
-  seg      = seg + 1;
-  startIdx = 5000*(seg-1)+1;
-  stopIdx  = 5000*(seg+1);
-end
-DBR = DBR/(seg-1);
+DBR = adbr(testLambdaYpre, testY, testLen);
 if (verbose <= 2)
   disp(['      Test Complete...L:',num2str(L), 9, '...DBR:',num2str(DBR)]);
 end

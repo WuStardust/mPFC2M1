@@ -1,4 +1,4 @@
-function [W,L,DBR,Whis] = runANN(H, Nz, xi1, xi2, mu, threshold, ...
+function [W,L,DBR,Lval,LtrainHis] = runANN(H, Nz, xi1, xi2, mu, threshold, ...
   iterationThres, maxIterations, alpha, splitFunc, verbose)
 % Train & test ANN
 %% Spike train ensemble & split train/test
@@ -178,13 +178,14 @@ L = logLikelyhood(testY, testLambdaYpre, alpha*norm(W, 1));
 
 seg = 1;
 startIdx = 1;
-stopIdx  = 10000;
+stopIdx  = floor(testLen/10); % split to 10 segment for calculate
+step     = floor(stopIdx/2); % 50 percent overlap
 DBR = 0;
 while(stopIdx<testLen)
   DBR      = DBR + dbr(testLambdaYpre(startIdx:stopIdx)', testY(startIdx:stopIdx)');
   seg      = seg + 1;
-  startIdx = 5000*(seg-1)+1;
-  stopIdx  = 5000*(seg+1);
+  startIdx = step*(seg-1)+1;
+  stopIdx  = step*(seg+1);
 end
 DBR = DBR/(seg-1);
 if (verbose <= 2)
