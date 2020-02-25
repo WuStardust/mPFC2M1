@@ -27,17 +27,7 @@ LvalHis(iter:end) = Lval;
 LvalBest = Lval;
 bestIter = iter;
 
-seg = 1;
-startIdx = 1;
-stopIdx  = 10000;
-DBRval = 0;
-while(stopIdx<valLen)
-  DBRval   = DBRval + dbr(valLambdaYpre(startIdx:stopIdx)', valY(startIdx:stopIdx)');
-  seg      = seg + 1;
-  startIdx = 5000*(seg-1)+1;
-  stopIdx  = 5000*(seg+1);
-end
-DBRval = DBRval/(seg-1);
+DBRval = adbr(valLambdaYpre, valY, valLen);
 
 while (iter<maxIterations)
   if (verbose<=0)
@@ -91,6 +81,7 @@ while (iter<maxIterations)
   Hessian = [Hew2, Hewtheta'; Hewtheta, Hetheta2];
   if (rcond(Hessian) < 1e-15 || sum(sum(isnan(Hessian))) == 1)
     disp('Error: BAD He!');
+    break;
   end
   
   while(1)
@@ -149,17 +140,7 @@ while (iter<maxIterations)
     break;
   end
   
-  seg = 1;
-  startIdx = 1;
-  stopIdx  = 10000;
-  DBRval = 0;
-  while(stopIdx<valLen)
-    DBRval   = DBRval + dbr(valLambdaYpre(startIdx:stopIdx)', valY(startIdx:stopIdx)');
-    seg      = seg + 1;
-    startIdx = 5000*(seg-1)+1;
-    stopIdx  = 5000*(seg+1);
-  end
-  DBRval = DBRval/(seg-1);
+  DBRval = adbr(valLambdaYpre, valY, valLen);
   
   if (verbose <= 1)
     plotData(valY(1:10000), valYpre(1:10000), valLambdaYpre(1:10000), LvalHis(1:iter), W)
@@ -176,18 +157,8 @@ W = Whis(bestIter,:);
 testLambdaYpre = ANNmodel(testX, W, Nx, Nz);
 L = logLikelyhood(testY, testLambdaYpre, alpha*norm(W, 1));
 
-seg = 1;
-startIdx = 1;
-stopIdx  = floor(testLen/10); % split to 10 segment for calculate
-step     = floor(stopIdx/2); % 50 percent overlap
-DBR = 0;
-while(stopIdx<testLen)
-  DBR      = DBR + dbr(testLambdaYpre(startIdx:stopIdx)', testY(startIdx:stopIdx)');
-  seg      = seg + 1;
-  startIdx = step*(seg-1)+1;
-  stopIdx  = step*(seg+1);
-end
-DBR = DBR/(seg-1);
+DBR = adbr(testLambdaYpre, testY, testLen);
+
 if (verbose <= 2)
   disp(['      Test Complete...L:',num2str(L), 9, '...DBR:',num2str(DBR)]);
 end
