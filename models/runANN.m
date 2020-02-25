@@ -137,7 +137,7 @@ while (iter<maxIterations)
   end
   LvalBest = max(LvalBest, LvalNew);
   % L on validation set change too little, or drop too much
-  if (abs(LvalNew-Lval)<threshold || LvalNew-LvalBest<-50)
+  if (abs(LvalNew-Lval)<threshold || LvalNew-LvalBest<-10)
     valConverge = valConverge + 1;
   else
     valConverge = 0;
