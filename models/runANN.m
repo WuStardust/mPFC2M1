@@ -159,7 +159,8 @@ L = logLikelyhood(testY, testLambdaYpre, alpha*norm(W, 1));
 
 DBR = adbr(testLambdaYpre, testY, testLen);
 
-if (verbose <= 2)
-  disp(['      Test Complete...L:',num2str(L), 9, '...DBR:',num2str(DBR)]);
+if (verbose <= 3)
+  disp(['Test Complete...L:',num2str(L), 9, '...H:', num2str(H), 9, ...
+    '...Nz:', num2str(Nz), 9, '...DBR:',num2str(DBR)]);
 end
 end

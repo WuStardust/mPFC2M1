@@ -35,15 +35,15 @@ parfor i=1:NzSearchNum*repeatNum
   maxIter = 5000; % max iteration num, over needs re-initial
   alpha = 0; % Regulization parameter
   splitFunc = @(history)splitData(mPFCspike,M1spikePart,history); % choose splitData function
-  verbose = 2;
+  verbose = 3;
   [W, L, DBR, Lval, LHistory] = runANN(H, Nz, xi1, xi2, mu, thres, iterThres, maxIter, alpha, splitFunc, verbose);
   results{i} = struct( ...
     "H",H, "xi1",xi1, "xi2",xi2, "mu",mu, "thres",thres, "iterThres",iterThres, ...
     "maxIter",maxIter, "alpha",alpha, "M1Idx",M1Idx, "s",s, ...
     "W",W, "L",L, "DBR",DBR, "Lval",Lval, "LHistory",LHistory ...
     );
-  if (i/20 == 0)
-    disp(['Nz ', num2str(Nz, '%02d'), ' idx ', num2str(mod(i-1, 20)+1, '%02d'), ' Lval ', num2str(Lval)])
+  if (i/10 == 0)
+    disp(['      Nz ', num2str(Nz, '%02d'), ' idx ', num2str(mod(i-1, 20)+1, '%02d'), ' Lval ', num2str(Lval)])
   end
 end
 toc
