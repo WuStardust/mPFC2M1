@@ -3,3 +3,4 @@
 *.fig
 !results/*.mat
 !results/*.fig
+*.log
