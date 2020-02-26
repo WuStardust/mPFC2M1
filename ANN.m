@@ -20,7 +20,7 @@ load("results/ANN_explore_Nz.mat", "ANN_explore_Nz")
 %   );
 rng(ANN_explore_Nz(400).s)
 NzSearchNum = 20;
-repeatNum = 60;
+repeatNum = 50;
 M1Idx = 1; % select M1 neuron
 M1spikePart = M1spike(:,M1Idx);
 tic
@@ -28,16 +28,16 @@ parfor i=1:NzSearchNum*repeatNum
   Nzlist = 1:NzSearchNum;
   s=rng;
   Nz = Nzlist(ceil(i/repeatNum));
-  H = 7; % temporal history, todo: grid search
+  H = 5; % temporal history, todo: grid search
   xi1 = 0.05; % first stage weight parameters initial range param
   xi2 = 0.1; % second stage weight parameters initial range param
   mu = 1000; % modified LM algorithm param
   thres = 1e-3; % stop error tolerance
   iterThres = 7; % stop after error over threshold $ times
-  maxIter = 5000; % max iteration num, over needs re-initial
+  maxIter = 1000; % max iteration num, over needs re-initial
   alpha = 0; % Regulization parameter
   splitFunc = @(history)splitData(mPFCspike,M1spikePart,history); % choose splitData function
-  verbose = 3;
+  verbose = 2;
   [W, L, DBR, Lval, LHistory] = runANN(H, Nz, xi1, xi2, mu, thres, iterThres, maxIter, alpha, splitFunc, verbose);
   results{i} = struct( ...
     "H",H, "xi1",xi1, "xi2",xi2, "mu",mu, "thres",thres, "iterThres",iterThres, ...
