@@ -20,10 +20,10 @@ Whis(1,:) = W;
 % forward
 [trainLambdaYpre, ~, trainLambdaZpre] = ANNmodel(trainX, W, Nx, Nz);
 Ltrain = logLikelyhood(trainY, trainLambdaYpre, alpha*norm(W, 1));
-LtrainHis(iter:end) = Ltrain;
+LtrainHis(iter) = Ltrain;
 valLambdaYpre= ANNmodel(valX, W, Nx, Nz);
 Lval = logLikelyhood(valY, valLambdaYpre, alpha*norm(W, 1));
-LvalHis(iter:end) = Lval;
+LvalHis(iter) = Lval;
 LvalBest = Lval;
 bestIter = iter;
 
