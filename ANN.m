@@ -24,7 +24,7 @@ repeatNum = 60;
 M1Idx = 1; % select M1 neuron
 M1spikePart = M1spike(:,M1Idx);
 tic
-parfor i=1:NzSearchNum*repeatNum
+for i=1:NzSearchNum*repeatNum
   Nzlist = 1:NzSearchNum;
   s=rng;
   Nz = Nzlist(ceil(i/repeatNum));
@@ -37,7 +37,7 @@ parfor i=1:NzSearchNum*repeatNum
   maxIter = 5000; % max iteration num, over needs re-initial
   alpha = 0; % Regulization parameter
   splitFunc = @(history)splitData(mPFCspike,M1spikePart,history); % choose splitData function
-  verbose = 3;
+  verbose = 0;
   [W, L, DBR, Lval, LHistory] = runANN(H, Nz, xi1, xi2, mu, thres, iterThres, maxIter, alpha, splitFunc, verbose);
   results{i} = struct( ...
     "H",H, "xi1",xi1, "xi2",xi2, "mu",mu, "thres",thres, "iterThres",iterThres, ...
@@ -50,9 +50,9 @@ parfor i=1:NzSearchNum*repeatNum
 end
 toc
 Nzlist = 1:NzSearchNum;
-for i=1:NzSearchNum*repeatNum
-  Nz = Nzlist(ceil(i/repeatNum));
-  idx = mod(i-1, repeatNum)+1+20;
-  ANN_explore_Nz(Nz, idx) = results{i};
-end
-save("results/ANN_explore_Nz_more.mat", "ANN_explore_Nz")
+% for i=1:NzSearchNum*repeatNum
+%   Nz = Nzlist(ceil(i/repeatNum));
+%   idx = mod(i-1, repeatNum)+1+20;
+%   ANN_explore_Nz(Nz, idx) = results{i};
+% end
+% save("results/ANN_explore_Nz_more.mat", "ANN_explore_Nz")
