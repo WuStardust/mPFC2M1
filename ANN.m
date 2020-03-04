@@ -4,8 +4,7 @@ close all;clear;clc;
 rng('default')
 addpath models/
 addpath utils/
-load("data/data_rat010_0615_spike_train_selected.mat")
-load("results/ANN_explore_Nz.mat", "ANN_explore_Nz")
+load("data/data_rat010_0615_spike_train_selected_with_delay.mat")
 %% Grid search
 % explore Nz as H=5, rng use default
 % 
@@ -13,21 +12,16 @@ load("results/ANN_explore_Nz.mat", "ANN_explore_Nz")
 % 
 % result seems not good, pretrain needed?
 
-% ANN_explore_Nz = struct( ...
-%   "H",{}, "xi1",{}, "xi2",{}, "mu",{}, "thres",{}, "iterThres",{}, ...
-%   "maxIter",{}, "alpha",{}, "M1Idx",{}, "s",{}, ...
-%   "W",{}, "L",{}, "DBR",{}, "Lval",{}, "LHistory",{} ...
-%   );
-rng(ANN_explore_Nz(400).s)
-NzSearchNum = 20;
-repeatNum = 50;
+ANN_explore_Nz = struct( ...
+  "H",{}, "xi1",{}, "xi2",{}, "mu",{}, "thres",{}, "iterThres",{}, ...
+  "maxIter",{}, "alpha",{}, "M1Idx",{}, "s",{}, "Nz",{}, ...
+  "W",{}, "L",{}, "DBR",{}, "Lval",{}, "LHistory",{} ...
+  );
 M1Idx = 1; % select M1 neuron
 M1spikePart = M1spike(:,M1Idx);
 tic
-parfor i=1:NzSearchNum*repeatNum
-  Nzlist = 1:NzSearchNum;
-  s=rng;
-  Nz = Nzlist(ceil(i/repeatNum));
+parfor i=1:800
+  Nz = getParamIndex(i);
   H = 5; % temporal history, todo: grid search
   xi1 = 0.05; % first stage weight parameters initial range param
   xi2 = 0.1; % second stage weight parameters initial range param
@@ -36,7 +30,7 @@ parfor i=1:NzSearchNum*repeatNum
   iterThres = 7; % stop after error over threshold $ times
   maxIter = 1000; % max iteration num, over needs re-initial
   alpha = 0; % Regulization parameter
-  splitFunc = @(history)splitData(mPFCspike,M1spikePart,history); % choose splitData function
+  splitFunc = @(history)splitDataAdvance(1,mPFCspike,M1spikePart,eventTrain,optimalDelay(M1Idx),history);
   verbose = 2;
   [W, L, DBR, Lval, LHistory] = runANN(H, Nz, xi1, xi2, mu, thres, iterThres, maxIter, alpha, splitFunc, verbose);
   results{i} = struct( ...
@@ -49,10 +43,8 @@ parfor i=1:NzSearchNum*repeatNum
   end
 end
 toc
-Nzlist = 1:NzSearchNum;
-for i=1:NzSearchNum*repeatNum
-  Nz = Nzlist(ceil(i/repeatNum));
-  idx = mod(i-1, repeatNum)+1+20;
+for i=1:800
+  [Nz,idx] = getParamIndex(i);
   ANN_explore_Nz(Nz, idx) = results{i};
 end
-save("results/ANN_explore_Nz_more.mat", "ANN_explore_Nz")
+save("results/ANN_explore_Nz_new.mat", "ANN_explore_Nz")

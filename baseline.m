@@ -2,8 +2,7 @@ close all;clear;clc;
 rng('default')
 addpath models\
 addpath utils\
-load("data/data_rat010_0615_spike_train_selected.mat")
-
+load("data/data_rat010_0615_spike_train_selected_with_delay.mat")
 %% GLM
 GLM_explore_H = struct( ...
   "H",{}, "xi",{}, "thres",{}, "iterThres",{}, ...
@@ -17,7 +16,7 @@ for H=1:10 % Temporal history. Explore within [1:10]
   iterThres = 7; % stop after error over threshold $ times
   maxIter = 40; % max iteration num, over needs re-initial
   M1Idx = 1; % select M1 neuron
-  splitFun = @(history)splitData(mPFCspike,M1spike(:,M1Idx),history); % choose splitData function as first Order
+  splitFun = @(history)splitDataAdvance(1,mPFCspike,M1spike(:,M1Idx),eventTrain,optimalDelay(M1Idx),history); % choose splitData function as first Order
   verbose = 2;
   [W, L, DBR, Lval, LHistory] = runGLM(H, xi, thres, iterThres, maxIter, alpha, splitFun, verbose);
   GLM_explore_H(H) = struct( ...
@@ -26,7 +25,7 @@ for H=1:10 % Temporal history. Explore within [1:10]
     "W",W, "L",L, "DBR",DBR, "Lval",Lval, "LHistory",LHistory ...
     );
 end
-save("results\GLM_explore_H.mat", "GLM_explore_H")
+save("results\GLM_explore_H_new.mat", "GLM_explore_H")
 %% 2nd Order GLM
 GLM_sec_explore_H = struct( ...
   "H",{}, "xi",{}, "thres",{}, "iterThres",{}, ...
@@ -41,7 +40,7 @@ for H=1:10
   iterThres = 7; % stop after error over threshold $ times
   maxIter = 40; % max iteration num, over needs re-initial
   M1Idx = 1; % select M1 neuron
-  splitFun = @(history)splitDataSecOrder(mPFCspike,M1spike(:,M1Idx),history); % choose splitData function as second Order
+  splitFun = @(history)splitDataAdvance(2,mPFCspike,M1spike(:,M1Idx),eventTrain,optimalDelay(M1Idx),history);
   verbose = 2;
   [W, L, GLM_sec_DBR] = runGLM(H, xi, thres, iterThres, maxIter, alpha, splitFun, verbose);
   GLM_sec_explore_H(H) = struct( ...
@@ -50,14 +49,14 @@ for H=1:10
     "W",W, "L",L, "DBR",GLM_sec_DBR ...
     );
 end
-save("results\GLM_sec_explore_H.mat", "GLM_sec_explore_H")
+save("results\GLM_sec_explore_H_new.mat", "GLM_sec_explore_H")
 %% show results
 % load data; uncoment following lines when needed
 % close all;clear;clc;
 % addpath models/
-% load data/data_rat010_0615_spike_train_selected.mat
-% load results/GLM_explore_H.mat
-% load results/GLM_sec_explore_H.mat
+% load data/data_rat010_0615_spike_train_selected_with_delay.mat
+% load results/GLM_explore_H_new.mat
+% load results/GLM_sec_explore_H_new.mat
 
 % get DBRs from differnt model result
 GLM_sec_DBR = zeros(1,10);
@@ -78,11 +77,11 @@ xlim([10 100])
 ylabel("7th neuron DBR")
 title("DBR-history")
 
-H=8;
+H=5;
 % get GLM params & test result
 W     = GLM_explore_H(H).W;
 M1Idx = GLM_explore_H(H).M1Idx;
-[~,~,~,~,~,testX,~,~,testY] = splitData(mPFCspike,M1spike(:,M1Idx),H);
+[~,~,~,~,~,testX,~,~,testY] = splitDataAdvance(1,mPFCspike,M1spike(:,M1Idx),eventTrain,optimalDelay(M1Idx),H);
 GLMtestLambdaYpre = GLMmodel(testX, W);
 GLMccList = zeros(1, 1000/10);
 % smooth result
@@ -95,7 +94,7 @@ end
 % 2nd Order GLM
 W     = GLM_sec_explore_H(H).W;
 M1Idx = GLM_sec_explore_H(H).M1Idx;
-[~,~,~,~,~,testX,~,~,testY] = splitDataSecOrder(mPFCspike,M1spike(:,M1Idx),H);
+[~,~,~,~,~,testX,~,~,testY,~,~,testEvent] = splitDataAdvance(2,mPFCspike,M1spike(:,M1Idx),eventTrain,optimalDelay(M1Idx),H);
 GLMsectestLambdaYpre = GLMmodel(testX, W);
 GLM_sec_ccList = zeros(1, 1000/10);
 % smooth
@@ -107,7 +106,7 @@ for kernelSize=10:10:1000
 end
 
 % optimal smooth kernel size result
-kernelSize = 100;
+kernelSize = 50;
 smoothedLambda = gaussianSmooth(testY, kernelSize);
 smoothedGLMLambdaPre = gaussianSmooth(GLMtestLambdaYpre, kernelSize);
 smoothedGLMsecLambdaPre = gaussianSmooth(GLMsectestLambdaYpre, kernelSize);
@@ -146,7 +145,7 @@ title("CC-kernel size")
 legend([h{1}; h{2}; h{3}], "Actual M1 spike", "GLM", "2nd-Order GLM", ...
   "Position",[0.5  0.95  0  0], "Box","off", "Orientation","horizontal")
 subplot(4,1,1)
-area(t, eventTrain(index))
+area((1:length(testEvent))/100, testEvent)
 figure(3)
 hold on
 h{1} = plot(t, smoothedLambda(index), 'r');
