@@ -19,8 +19,10 @@ ANN_explore_Nz = struct( ...
   );
 M1Idx = 1; % select M1 neuron
 M1spikePart = M1spike(:,M1Idx);
+disp('~~~~~~~~~~~~~Start~~~~~~~~~~~~')
 tic
 parfor i=1:800
+  disp(['===============', num2str(i), ' BEGIN', '===================='])
   s=rng;
   Nz = getParamIndex(i);
   H = 5; % temporal history, todo: grid search
