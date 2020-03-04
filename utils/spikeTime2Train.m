@@ -1,4 +1,4 @@
-function [M1, mPFC, ratios, eventTrain] = spikeTime2Train(filename)
+function [M1, mPFC, ratios, eventTrain, M1num, mPFCnum, actTrain] = spikeTime2Train(filename)
 S = load(filename);
 timebins  = 0.01; % 10ms time bins
 spikeLength = 1e7;
@@ -56,10 +56,10 @@ mPFC = double(mPFC>0);
 %% event time to event train
 % highLever = accumarray(fix(S.EVT01(:,1))/timebins+1, 1);
 % lowLever  = accumarray(fix(S.EVT02(:,1))/timebins+1, 1);
-success   = accumarray(fix(S.EVT03(:,1))/timebins+1, 1)>0;
-startTrail= accumarray(fix(S.EVT05(:,1))/timebins+1, 1)>0;
-% press     = accumarray(fix(S.EVT06(:,1))/timebins+1, 1);
-release   = accumarray(fix(S.EVT07(:,1))/timebins+1, 1)>0;
+success   = accumarray(fix(S.EVT03(:,1)/timebins)+1, 1)>0;
+startTrail= accumarray(fix(S.EVT05(:,1)/timebins)+1, 1)>0;
+press     = accumarray(fix(S.EVT06(:,1))/timebins+1, 1);
+release   = accumarray(fix(S.EVT07(:,1)/timebins)+1, 1)>0;
 
 suc = false;
 eventTrain = zeros(1, spikeLength);
@@ -83,6 +83,21 @@ for i=1:spikeLength
     eventTrain(startTime:i) = 1;
     n=n+1;
     suc = false;
+  end
+end
+
+actTrain = zeros(1,spikeLength);
+for i=1:spikeLength
+  if (i>length(press)); continue; end
+  if (press(i) == 1)
+    presstime = i;
+    actTrain(max(i-10,1):i+10) = 1;
+  end
+  
+  if (i>length(release)); continue; end
+  if (release(i) == 1)
+    actTrain(presstime:i) = 1;
+    actTrain(max(i-10,1):i+10) = 1;
   end
 end
 
