@@ -21,6 +21,7 @@ M1Idx = 1; % select M1 neuron
 M1spikePart = M1spike(:,M1Idx);
 tic
 parfor i=1:800
+  s=rng;
   Nz = getParamIndex(i);
   H = 5; % temporal history, todo: grid search
   xi1 = 0.05; % first stage weight parameters initial range param
