@@ -15,8 +15,10 @@ HSearchNum = 10;
 repeatNum = 20;
 M1Idx = 1; % select M1 neuron
 M1spikePart = M1spike(:,M1Idx);
+disp('~~~~~~~~~~~~~Start~~~~~~~~~~~~')
 tic
 parfor i=1:HSearchNum*repeatNum
+  disp(['===============', num2str(i), ' BEGIN', '===================='])
   Hlist = 1:HSearchNum;
   s=rng;
   H = Hlist(ceil(i/repeatNum));
@@ -41,6 +43,7 @@ parfor i=1:HSearchNum*repeatNum
   end
 end
 toc
+disp('~~~~~~~~~~~~~End~~~~~~~~~~~~')
 Hlist = 1:HSearchNum;
 for i=1:HSearchNum*repeatNum
   H = Hlist(ceil(i/repeatNum));
