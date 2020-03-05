@@ -4,7 +4,7 @@ close all;clear;clc;
 rng('default')
 addpath models/
 addpath utils/
-load("data/data_rat010_0615_spike_train_selected.mat")
+load("data/data_rat010_0615_spike_train_selected_with_delay.mat")
 %% Grid search
 ANN_explore_H = struct( ...
   "H",{}, "xi1",{}, "xi2",{}, "mu",{}, "thres",{}, "iterThres",{}, ...
@@ -12,7 +12,7 @@ ANN_explore_H = struct( ...
   "W",{}, "L",{}, "DBR",{}, "Lval",{}, "LHistory",{} ...
   );
 HSearchNum = 10;
-repeatNum = 100;
+repeatNum = 20;
 M1Idx = 1; % select M1 neuron
 M1spikePart = M1spike(:,M1Idx);
 tic
@@ -20,7 +20,7 @@ parfor i=1:HSearchNum*repeatNum
   Hlist = 1:HSearchNum;
   s=rng;
   H = Hlist(ceil(i/repeatNum));
-  Nz = 10; % temporal history
+  Nz = 13; % hidden neuron number
   xi1 = 0.05; % first stage weight parameters initial range param
   xi2 = 0.1; % second stage weight parameters initial range param
   mu = 1000; % modified LM algorithm param
@@ -47,4 +47,4 @@ for i=1:HSearchNum*repeatNum
   idx = mod(i-1, repeatNum)+1;
   ANN_explore_H(H, idx) = results{i};
 end
-save("results/ANN_explore_H.mat", "ANN_explore_H")
+save("results/ANN_explore_H_new.mat", "ANN_explore_H")
