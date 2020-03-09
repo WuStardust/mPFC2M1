@@ -24,7 +24,7 @@ for iter=1:maxIterations
   % validate
   [valLambdaYpre, valYpre] = GLMmodel(valX, W);
   Lnew = logLikelyhood(valY, valLambdaYpre, alpha*norm(W, 1));
-  err = abs(Lnew - L);
+  err = Lnew - L;
   if (err < threshold)
     overIterations = overIterations + 1;
   else
