@@ -161,6 +161,7 @@ DBR = adbr(testLambdaYpre, testY, testLen);
 
 if (verbose <= 3)
   disp(['Test Complete...L:',num2str(L), 9, '...H:', num2str(H), 9, ...
-    '...Nz:', num2str(Nz), 9, '...DBR:',num2str(DBR)]);
+    '...Nz:', num2str(Nz), 9, '...xi1', num2str(xi1), 9, '...xi2', num2str(xi2), 9, ...
+    '...DBR:',num2str(DBR)]);
 end
 end
