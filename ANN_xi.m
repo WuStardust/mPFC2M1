@@ -4,7 +4,7 @@ addpath models/
 addpath utils/
 load("data/data_rat010_0615_spike_train_selected_with_delay.mat")
 %% Grid search
-ANN_explore_Nz = struct( ...
+ANN_explore_xi = struct( ...
   "H",{}, "xi1",{}, "xi2",{}, "mu",{}, "thres",{}, "iterThres",{}, ...
   "maxIter",{}, "alpha",{}, "M1Idx",{}, "s",{}, "Nz",{}, ...
   "W",{}, "L",{}, "DBR",{}, "Lval",{}, "LHistory",{} ...
@@ -13,17 +13,18 @@ M1Idx = 1; % select M1 neuron
 M1spikePart = M1spike(:,M1Idx);
 disp('~~~~~~~~~~~~~Start~~~~~~~~~~~~')
 tic
-parfor i=1:800
+parfor i=1:7*7*20
   disp(['===============', num2str(i), ' BEGIN', '===================='])
   s=rng;
-  Nz = getParamIndex(i);
-  H = 5; % temporal history, todo: grid search
-  xi1 = 0.05; % first stage weight parameters initial range param
-  xi2 = 0.1; % second stage weight parameters initial range param
+  Nz = 5;
+  H = 5; % temporal history
+  xiList = [10 5 1 0.5 0.1 0.05 0.01];
+  xi1 = xiList(ceil(ceil(i/20)/7)); % first stage weight parameters initial range param
+  xi2 = xiList(mod(ceil(i/20)-1, 7)+1); % second stage weight parameters initial range param
   mu = 1000; % modified LM algorithm param
   thres = 1e-3; % stop error tolerance
   iterThres = 7; % stop after error over threshold $ times
-  maxIter = 1000; % max iteration num, over needs re-initial
+  maxIter = 500; % max iteration num, over needs re-initial
   alpha = 0; % Regulization parameter
   splitFunc = @(history)splitDataAdvance(1,mPFCspike,M1spikePart,eventTrain,optimalDelay(M1Idx),history);
   verbose = 2;
@@ -38,8 +39,10 @@ parfor i=1:800
   end
 end
 toc
-for i=1:800
-  [Nz,idx] = getParamIndex(i);
-  ANN_explore_Nz(Nz, idx) = results{i};
+for i=1:7*7*20
+  xi1No = ceil(ceil(i/20)/7);
+  xi2No = mod(ceil(i/20)-1, 7)+1;
+  index = mod(i-1,20)+1;
+  ANN_explore_xi(xi1No, xi2No, idx) = results{i};
 end
-save("results/ANN_explore_Nz_new.mat", "ANN_explore_Nz")
+save("results/ANN_explore_xi.mat", "ANN_explore_xi")
