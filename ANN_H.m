@@ -12,7 +12,7 @@ ANN_explore_H = struct( ...
   "W",{}, "L",{}, "DBR",{}, "Lval",{}, "LHistory",{} ...
   );
 HSearchNum = 10;
-repeatNum = 20;
+repeatNum = 30;
 M1Idx = 1; % select M1 neuron
 M1spikePart = M1spike(:,M1Idx);
 disp('~~~~~~~~~~~~~Start~~~~~~~~~~~~')
@@ -22,7 +22,7 @@ parfor i=1:HSearchNum*repeatNum
   Hlist = 1:HSearchNum;
   s=rng;
   H = Hlist(ceil(i/repeatNum));
-  Nz = 13; % hidden neuron number
+  Nz = 10; % hidden neuron number
   xi1 = 0.1; % first stage weight parameters initial range param
   xi2 = 0.5; % second stage weight parameters initial range param
   mu = 1000; % modified LM algorithm param
