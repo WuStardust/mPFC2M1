@@ -5,8 +5,8 @@ function [W,L,DBR,Lval,LtrainHis] = runANN(H, Nz, xi1, xi2, mu, threshold, ...
 [trainLen,valLen,testLen,trainX,valX,testX,trainY,valY,testY] = splitFunc(H);
 %% Initialize params & variables
 [~, Nx] = size(trainX);
-w     = xi2 / sqrt(Nx) * (2*rand(Nx, Nz  ) - 1);
-theta = xi1 / sqrt(Nz) * (2*rand(1 , Nz+1) - 1);
+w     = xi2 / sqrt(Nx) * (2*normrnd(0, 1, Nx, Nz  ) - 1);
+theta = xi1 / sqrt(Nz) * (2*normrnd(0, 1, 1 , Nz+1) - 1);
 W = [reshape(w, 1, Nx*Nz), theta];
 
 LtrainHis = zeros(1, maxIterations);
@@ -128,7 +128,7 @@ while (iter<maxIterations)
   end
   LvalBest = max(LvalBest, LvalNew);
   % L on validation set change too little, or drop too much
-  if (abs(LvalNew-Lval)<threshold || LvalNew-LvalBest<-10)
+  if (abs(LvalNew-Lval)<threshold || LvalNew-LvalBest<-50)
     valConverge = valConverge + 1;
   else
     valConverge = 0;
@@ -161,7 +161,7 @@ DBR = adbr(testLambdaYpre, testY, testLen);
 
 if (verbose <= 3)
   disp(['Test Complete...L:',num2str(L), 9, '...H:', num2str(H), 9, ...
-    '...Nz:', num2str(Nz), 9, '...xi1', num2str(xi1), 9, '...xi2', num2str(xi2), 9, ...
+    '...Nz:', num2str(Nz), 9, '...xi1:', num2str(xi1), 9, '...xi2:', num2str(xi2), 9, ...
     '...DBR:',num2str(DBR)]);
 end
 end
