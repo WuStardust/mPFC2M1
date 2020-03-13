@@ -25,7 +25,7 @@ for H=1:10 % Temporal history. Explore within [1:10]
     "W",W, "L",L, "DBR",DBR, "Lval",Lval, "LHistory",LHistory ...
     );
 end
-save("results\GLM_explore_H_new.mat", "GLM_explore_H")
+save("results\GLM_explore_H_1.mat", "GLM_explore_H")
 %% 2nd Order GLM
 GLM_sec_explore_H = struct( ...
   "H",{}, "xi",{}, "thres",{}, "iterThres",{}, ...
@@ -49,7 +49,7 @@ for H=1:10
     "W",W, "L",L, "DBR",GLM_sec_DBR ...
     );
 end
-save("results\GLM_sec_explore_H_new.mat", "GLM_sec_explore_H")
+save("results\GLM_sec_explore_H_1.mat", "GLM_sec_explore_H")
 %% show results
 % load data; uncoment following lines when needed
 % close all;clear;clc;
@@ -77,7 +77,7 @@ xlim([10 100])
 ylabel("7th neuron DBR")
 title("DBR-history")
 
-H=5;
+H=10;
 % get GLM params & test result
 W     = GLM_explore_H(H).W;
 M1Idx = GLM_explore_H(H).M1Idx;
@@ -118,7 +118,7 @@ for kernelSize=10:10:1000
 end
 
 % optimal smooth kernel size result
-kernelSize = 50;
+kernelSize = 30;
 smoothedLambda = gaussianSmooth(trainY, kernelSize);
 smoothedGLMLambdaPre = gaussianSmooth(GLMtrainLambdaYpre, kernelSize);
 smoothedGLMsecLambdaPre = gaussianSmooth(GLMsectrainLambdaYpre, kernelSize);
@@ -163,7 +163,7 @@ legend([h{1}; h{2}; h{3}], "Actual M1 spike", "GLM", "2nd-Order GLM", ...
   "Position",[0.5  0.95  0  0], "Box","off", "Orientation","horizontal")
 
 % optimal smooth kernel size result
-kernelSize = 50;
+kernelSize = 30;
 smoothedLambda = gaussianSmooth(testY, kernelSize);
 smoothedGLMLambdaPre = gaussianSmooth(GLMtestLambdaYpre, kernelSize);
 smoothedGLMsecLambdaPre = gaussianSmooth(GLMsectestLambdaYpre, kernelSize);
