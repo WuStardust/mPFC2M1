@@ -1,4 +1,4 @@
-function [W,L,DBR,Lval,LtrainHis] = runANN(H, Nz, xi1, xi2, mu, threshold, ...
+function [W,L,DBR,Lval,LtrainHis,LvalHis,DBRtrainHis,DBRvalHis,Whis] = runANN(H, Nz, xi1, xi2, mu, threshold, ...
   iterationThres, maxIterations, alpha, splitFunc, verbose)
 % Train & test ANN
 %% Spike train ensemble & split train/test
@@ -15,7 +15,8 @@ iter = 1;
 valConverge = 0;
 Whis = zeros(maxIterations+1,length(W));
 Whis(1,:) = W;
-
+DBRvalHis = zeros(1, maxIterations);
+DBRtrainHis = zeros(1, maxIterations);
 %% train ANN
 % forward
 [trainLambdaYpre, ~, trainLambdaZpre] = ANNmodel(trainX, W, Nx, Nz);
@@ -27,9 +28,12 @@ LvalHis(iter) = Lval;
 LvalBest = Lval;
 bestIter = iter;
 
+DBRtrain = adbr(trainLambdaYpre, trainY, trainLen);
 DBRval = adbr(valLambdaYpre, valY, valLen);
 
 while (iter<maxIterations)
+  DBRtrainHis(iter) = DBRtrain;
+  DBRvalHis(iter) = DBRval;
   if (verbose<=0)
     disp(strcat(num2str(iter-1),'/',num2str(maxIterations), ...
       '...L=',num2str(Ltrain),'...mu=',num2str(mu),'...Lval=',num2str(Lval), ...
@@ -128,7 +132,7 @@ while (iter<maxIterations)
   end
   LvalBest = max(LvalBest, LvalNew);
   % L on validation set change too little, or drop too much
-  if (abs(LvalNew-Lval)<threshold || LvalNew-LvalBest<-50)
+  if (abs(LvalNew-Lval)<threshold || LvalNew-LvalBest<-500)
     valConverge = valConverge + 1;
   else
     valConverge = 0;
@@ -140,8 +144,9 @@ while (iter<maxIterations)
     break;
   end
   
+  DBRtrain = adbr(trainLambdaYpre, trainY, trainLen);
   DBRval = adbr(valLambdaYpre, valY, valLen);
-  
+
   if (verbose <= 1)
     plotData(valY(1:10000), valYpre(1:10000), valLambdaYpre(1:10000), LvalHis(1:iter), W)
   end
@@ -153,6 +158,9 @@ if (verbose <= 2)
     '...Nz:', num2str(Nz), 9, '...alpha:',num2str(alpha), 9, '...mu=',num2str(mu)]);
 end
 W = Whis(bestIter,:);
+LtrainHis(LtrainHis==0) = nan;
+LvalHis(LvalHis==0) = nan;
+Whis = Whis(1:iter,:);
 %% Test data
 testLambdaYpre = ANNmodel(testX, W, Nx, Nz);
 L = logLikelyhood(testY, testLambdaYpre, alpha*norm(W, 1));

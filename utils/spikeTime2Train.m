@@ -1,10 +1,9 @@
-function [M1, mPFC, ratios, eventTrain, M1num, mPFCnum, actTrain, segTrain] = spikeTime2Train(filename)
+function [M1, mPFC, ratios, eventTrain, M1num, mPFCnum, actTrain, segTrain, segRatios] = spikeTime2Train(filename)
 S = load(filename);
 timebins  = 0.01; % 10ms time bins
 spikeLength = 1e7;
 M1num       = 0;
 mPFCnum     = 0;
-
 %% get all channel names
 for channelNo = 1:32
   for sub = ['a', 'b']
@@ -42,17 +41,6 @@ for channelNo = 1:32
     end
   end
 end
-
-%% calculate spike/total ratio & multi-spike/spike ratio
-M1withSpike = mean(sum(M1>0)/spikeLength);
-mPFCwithSpike = mean(sum(mPFC>0)/spikeLength);
-M1multiSpike = mean(sum(M1>1)./sum(M1>0));
-mPFCmultiSpike = mean(sum(mPFC>1)./sum(mPFC>0));
-ratios = [M1withSpike, mPFCwithSpike, M1multiSpike, mPFCmultiSpike];
-% mutispike also represented by 1
-M1 = double(M1>0);
-mPFC = double(mPFC>0);
-
 %% event time to event train
 % highLever = accumarray(fix(S.EVT01(:,1))/timebins+1, 1);
 % lowLever  = accumarray(fix(S.EVT02(:,1))/timebins+1, 1);
@@ -110,5 +98,20 @@ for i=1:spikeLength
     actTrain(max(i-10,1):i+10) = 1;
   end
 end
-
+%% calculate spike/total ratio & multi-spike/spike ratio
+% all data
+M1withSpike = mean(sum(M1>0)/spikeLength);
+mPFCwithSpike = mean(sum(mPFC>0)/spikeLength);
+M1multiSpike = mean(sum(M1>1)./sum(M1>0));
+mPFCmultiSpike = mean(sum(mPFC>1)./sum(mPFC>0));
+ratios = [M1withSpike, mPFCwithSpike, M1multiSpike, mPFCmultiSpike];
+% seg data
+segM1withSpike = mean(sum(M1.*(segTrain'>0)>0)/sum(segTrain>0));
+segmPFCwithSpike = mean(sum(mPFC.*(segTrain'>0)>0)/sum(segTrain>0));
+segM1multiSpike = mean(sum(M1.*(segTrain'>0)>1)./sum(M1.*(segTrain'>0)>0));
+segmPFCmultiSpike = mean(sum(mPFC.*(segTrain'>0)>1)./sum(mPFC.*(segTrain'>0)>0));
+segRatios = [segM1withSpike, segmPFCwithSpike, segM1multiSpike, segmPFCmultiSpike];
+% mutispike also represented by 1
+M1 = double(M1>0);
+mPFC = double(mPFC>0);
 end

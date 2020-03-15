@@ -55,8 +55,8 @@ save("results\GLM_sec_explore_H_1.mat", "GLM_sec_explore_H")
 % close all;clear;clc;
 % addpath models/
 % load data/data_rat010_0615_spike_train_selected_with_delay.mat
-% load results/GLM_explore_H_new.mat
-% load results/GLM_sec_explore_H_new.mat
+% load results/GLM_explore_H_3.mat
+% load results/GLM_sec_explore_H_3.mat
 
 % get DBRs from differnt model result
 GLM_sec_DBR = zeros(1,10);
