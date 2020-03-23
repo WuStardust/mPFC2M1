@@ -15,7 +15,7 @@ disp('~~~~~~~~~~~~~Start~~~~~~~~~~~~')
 tic
 for Nz=1:25
 parfor i=1:40
-  disp(['===============', num2str(i), ' BEGIN', '===================='])
+  disp(['===============', datestr(datetime), '-', num2str(Nz), '-', num2str(i), '==============='])
   s=rng;
 %   Nz = getParamIndex(i);
   H = 15; % temporal history, todo: grid search
