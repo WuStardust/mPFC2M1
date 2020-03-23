@@ -5,8 +5,8 @@ function [W,L,DBR,Lval,LtrainHis,LvalHis,DBRtrainHis,DBRvalHis,Whis] = runANN(H,
 [trainLen,valLen,testLen,trainX,valX,testX,trainY,valY,testY] = splitFunc(H);
 %% Initialize params & variables
 [~, Nx] = size(trainX);
-w     = xi2 / sqrt(Nx) * (2*normrnd(0, 1, Nx, Nz  ) - 1);
-theta = xi1 / sqrt(Nz) * (2*normrnd(0, 1, 1 , Nz+1) - 1);
+w     = xi2 / sqrt(Nx) * (2*rand(Nx, Nz  ) - 1);
+theta = xi1 / sqrt(Nz) * (2*rand(1 , Nz+1) - 1);
 W = [reshape(w, 1, Nx*Nz), theta];
 
 LtrainHis = zeros(1, maxIterations);
