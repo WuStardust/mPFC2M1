@@ -148,7 +148,7 @@ while (iter<maxIterations)
   DBRval = adbr(valLambdaYpre, valY, valLen);
 
   if (verbose <= 1)
-    plotData(valY(1:10000), valYpre(1:10000), valLambdaYpre(1:10000), LvalHis(1:iter), W)
+    plotData(valY, valYpre, valLambdaYpre, LvalHis(1:iter), W)
   end
 end
 

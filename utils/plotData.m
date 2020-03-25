@@ -19,7 +19,7 @@ function plotData(spikeTrainY, spikeTrainYpredict, lambdaYTrainPredict, LHistory
     subplot(5, 1, 4)
     plot(LHistory)
     subplot(5, 1, 5)
-    plot(W)
+    histogram(W)
 
     drawnow
 end
