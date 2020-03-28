@@ -1,9 +1,16 @@
 function [trainLen, valLen, testLen, trainX, valX, testX, trainY, valY, testY, trainEvent, valEvent, testEvent] = splitDataAdvance(order, inputSignal, outputSignal, eventTrain, delay, segTrain, H)
 %% get data ensemble with history
+pattern = 'vm(\d+)-(\d+)-(\d+[.]\d+)';
 if (order==1)
   Xhat = ensemble(inputSignal, H);
 elseif (order==2)
   Xhat = ensembleSecOrder(inputSignal, H);
+elseif (regexp(order,pattern))
+  regOut = regexp(order,pattern,'tokens');
+  lagOrder = str2double(regOut{1}{1});
+  lagnum   = str2double(regOut{1}{2});
+  lagalpha = str2double(regOut{1}{3});
+  Xhat = ensembleLaguerre(inputSignal, H, lagnum, lagOrder, lagalpha);
 end
 
 %% success trail number

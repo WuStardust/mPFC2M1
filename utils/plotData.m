@@ -13,6 +13,11 @@ function plotData(spikeTrainY, spikeTrainYpredict, lambdaYTrainPredict, LHistory
     
     subplot(5, 1, 3);
     plot(t, lambdaYTrainPredict);
+    hold on
+    plot(t, gaussianSmooth(lambdaYTrainPredict,30), 'r')
+    plot(t, gaussianSmooth(spikeTrainY,30), 'b')
+    hold off
+    legend("predict", "smoothedPridicted", "smoothedTruth")
     xlabel('Time(sec)')
     ylabel('lambdaY Predict')
 

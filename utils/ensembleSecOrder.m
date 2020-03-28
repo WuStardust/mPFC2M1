@@ -16,7 +16,7 @@ function X = ensembleSecOrder(x, H)
   X(:, channels*H+1) = ones(timeBins-h+1, 1);
   
   XcovHat = zeros(timeBins-H+1, (channels*H-1)*channels*H/2);
-  unitTril = logical(tril(ones(channels*H),-1)); % todo: why previous code use -1 as params?
+  unitTril = logical(tril(ones(channels*H),-1)); % square of logical is same as before, so no need for square
   for k=H:timeBins
     Xhis = reshape(x(k-H+1:k,:)*1, channels*H, 1);
     Xcov = Xhis * Xhis';

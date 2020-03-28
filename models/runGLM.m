@@ -12,7 +12,7 @@ overIterations = 0;
 %% Train GLM
 for iter=1:maxIterations
   % forward
-  trainLambdaYpre = GLMmodel(trainX, W);
+  [trainLambdaYpre, trainYpre] = GLMmodel(trainX, W);
   % update Weigths
   G = (trainY - trainLambdaYpre)' * trainX - alpha * abs(W) ./ W;
   He = trainX' * spdiags(trainLambdaYpre.*(1-trainLambdaYpre),0,trainLen,trainLen) * trainX;
@@ -40,18 +40,22 @@ for iter=1:maxIterations
   end
 end
 if (verbose <= 1)
-  plotData(valY(1:10000), valYpre(1:10000), valLambdaYpre(1:10000), LHistory, W)
+  plotData(trainY(1:10000), trainYpre(1:10000), trainLambdaYpre(1:10000), LHistory, W)
 end
 if (verbose <= 2)
-  disp([num2str(iter),'/',num2str(maxIterations),':Train Complete...L:',num2str(L), 9, '...H:', num2str(H), 9, '...xi:',num2str(xi), 9, '...alpha:',num2str(alpha)]);
+  trainLambdaYpre = GLMmodel(trainX, W);
+  L = logLikelyhood(trainY, trainLambdaYpre, alpha*norm(W, 1));
+  Lbound = logLikelyhood(trainY, gaussianSmooth(trainY,H)+1e-4, alpha*norm(W, 1));
+  disp([num2str(iter),'/',num2str(maxIterations),':Train Complete...L:',num2str(L), 9, '...Lbound:', num2str(Lbound), 9, '...H:', num2str(H), 9, '...xi:',num2str(xi), 9, '...alpha:',num2str(alpha)]);
 end
 Lval = L;
 LHistory = LHistory(1:iter);
 %% Test data
 testLambdaYpre = GLMmodel(testX, W);
 L = logLikelyhood(testY, testLambdaYpre, alpha*norm(W, 1));
+Lbound = logLikelyhood(testY, gaussianSmooth(testY,H)+1e-4, alpha*norm(W, 1));
 DBR = adbr(testLambdaYpre, testY, testLen);
 if (verbose <= 2)
-  disp(['      Test Complete...L:',num2str(L), 9, '...DBR:',num2str(DBR)]);
+  disp(['      Test Complete...L:',num2str(L), 9, '...Lbound:',num2str(Lbound), 9, '...DBR:',num2str(DBR)]);
 end
 end
