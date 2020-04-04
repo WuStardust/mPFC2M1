@@ -12,7 +12,6 @@ elseif (regexp(order,pattern))
   lagalpha = str2double(regOut{1}{3});
   Xhat = ensembleLaguerre(inputSignal, H, lagnum, lagOrder, lagalpha);
 end
-
 %% success trail number
 successCount = 0;
 for i=2:length(eventTrain)

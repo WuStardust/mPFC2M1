@@ -24,6 +24,11 @@ for idx = 1:channels
   x_tmp = x_ensemble(:,idx:channels:channels*(H-1)+idx);
   x_new(:,idx,:) = x_tmp*LagEx;
 end
+% %% recursively calcuted lagX
+% lagX = ensembleLaguerreRecur(x, H, lagnum, order, alpha);
+% %% compare
+% results = sum(sum(lagX~=x_new));
+% disp(num2str(results))
 %% construct specific order ensemble
 Xzero  = ones(timeBins, 1); % zeros order
 Xfirst = ones(timeBins, channels*lagnum); % first order
