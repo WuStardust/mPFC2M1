@@ -1,4 +1,4 @@
-function [W,L,DBR,Lval,LtrainHis,LvalHis,DBRtrainHis,DBRvalHis,Whis] = runANN(H, Nz, xi1, xi2, mu, threshold, ...
+function [W,L,DBR,Lval,LtrainHis,LvalHis,DBRtrainHis,DBRvalHis,Whis,muHis,HessianDetHis] = runANN(H, Nz, xi1, xi2, mu, threshold, ...
   iterationThres, maxIterations, alpha, splitFunc, verbose)
 % Train & test ANN
 %% Spike train ensemble & split train/test
@@ -17,6 +17,8 @@ Whis = zeros(maxIterations+1,length(W));
 Whis(1,:) = W;
 DBRvalHis = zeros(1, maxIterations);
 DBRtrainHis = zeros(1, maxIterations);
+HessianDetHis = zeros(1, maxIterations);
+muHis = zeros(1, maxIterations);
 %% train ANN
 % forward
 [trainLambdaYpre, ~, trainLambdaZpre] = ANNmodel(trainX, W, Nx, Nz);
@@ -83,6 +85,7 @@ while (iter<maxIterations)
   Hewtheta(Nz+1, :) = reshape((- thetaYZPro' * trainX)', 1, Nz*Nx);
   
   Hessian = [Hew2, Hewtheta'; Hewtheta, Hetheta2];
+  HessianDetHis(iter) = det(Hessian);
   if (rcond(Hessian) < 1e-15 || sum(sum(isnan(Hessian))) == 1)
     disp('Error: BAD He!');
     break;
@@ -109,6 +112,7 @@ while (iter<maxIterations)
       break; % Lnew is better, nice to go on
     end
   end
+  muHis(iter) = mu;
   
   % step: Lnew is better OR mu is too Large
   iter = iter + 1;
