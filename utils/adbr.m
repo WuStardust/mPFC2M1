@@ -7,7 +7,10 @@ for i=1:100
   step     = 1500; % floor(stopIdx/2); % 50 percent overlap
   DBR = 0;
   while(stopIdx<spikeLength)
-    DBR      = DBR + dbr(p(startIdx:stopIdx)', spikes(startIdx:stopIdx)');
+    opt.DTCorrelation = 1;
+    opt.sampleRate = 100;
+    [~,~,~,~,temp]=computeKSStats(spikes(startIdx:stopIdx), p(startIdx:stopIdx)*100, opt);
+    DBR     = DBR + temp/1.36*sqrt(sum(spikes(startIdx:stopIdx)));
     seg      = seg + 1;
     startIdx = step*(seg-1)+1;
     stopIdx  = step*(seg+1);

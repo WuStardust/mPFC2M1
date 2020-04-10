@@ -2,7 +2,7 @@ close all;clear;clc;
 rng('default')
 addpath models\
 addpath utils\
-load("data/rat_010_07_04_spike_train_selected_with_delay_8.mat")
+load("data/data_rat010_0615_spike_train_selected_with_delay.mat")
 M1Idx = 1; % select M1 neuron
 %% GLM
 GLM_explore_H = struct( ...
@@ -25,7 +25,7 @@ for H=1:20 % Temporal history. Explore within [1:10]
     "W",W, "L",L, "DBR",DBR, "Lval",Lval, "LHistory",LHistory ...
     );
 end
-save("results\GLM_explore_H_w_8.mat", "GLM_explore_H")
+save("results\GLM_explore_H_1.mat", "GLM_explore_H")
 %% 2nd Order GLM
 GLM_sec_explore_H = struct( ...
   "H",{}, "xi",{}, "thres",{}, "iterThres",{}, "lagnum", {}, "lagalpha", {}, ...
@@ -63,14 +63,14 @@ for H=2:20
     "W",bestW, "L",bestL, "DBR",bestDBR ...
     );
 end
-save("results\GLM_sec_explore_H_w_8.mat", "GLM_sec_explore_H")
+save("results\GLM_sec_explore_H_1.mat", "GLM_sec_explore_H")
 %% show results
 % load data; uncoment following lines when needed
-% close all;clear;clc;
-% addpath models/
-% load data/data_rat010_0615_spike_train_selected_with_delay.mat
-% load results/GLM_explore_H_1.mat
-% load results/GLM_sec_explore_H_1.mat
+close all;clear;clc;
+addpath models/
+load data/data_rat010_0615_spike_train_selected_with_delay.mat
+load results/GLM_explore_H_1.mat
+load results/GLM_sec_explore_H_1.mat
 
 % get DBRs from differnt model result
 GLM_sec_DBR = zeros(1,20);
@@ -94,10 +94,11 @@ hold off
 legend("GLM", "2nd-Order GLM")
 xlabel("Length of mPFC history(msec)")
 xlim([10 200])
-ylabel("2th neuron DBR")
+ylabel("DBR")
+% ylim([0.9 1.1])
 title("DBR-history")
 
-H=10;
+H=20;
 % get GLM params & test result
 W     = GLM_explore_H(H).W;
 M1Idx = GLM_explore_H(H).M1Idx;

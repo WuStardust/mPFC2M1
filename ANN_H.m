@@ -13,12 +13,12 @@ ANN_explore_H = struct( ...
   "LvalHis",{}, "DBRtrainHis",{}, "DBRvalHis",{}, "Whis",{},"muHis",{},"HessianDetHis",{} ...
   );
 HSearchNum = 20;
-repeatNum = 20;
+repeatNum = 30;
 M1Idx = 1; % select M1 neuron
 M1spikePart = M1spike(:,M1Idx);
 disp('~~~~~~~~~~~~~Start~~~~~~~~~~~~')
 tic
-for H=1:1:HSearchNum
+for H=1:HSearchNum
 parfor i=1:repeatNum
   disp(['===============', datestr(datetime), '-', num2str(H), '-', num2str(i), '==============='])
   s=rng;
@@ -49,4 +49,4 @@ disp('~~~~~~~~~~~~~End~~~~~~~~~~~~')
 %   idx = mod(i-1, repeatNum)+1;
 %   ANN_explore_H(H, idx) = results{i};
 % end
-save("results/ANN_explore_H_w_8_0407.mat", "ANN_explore_H")
+save("results/ANN_explore_H_w_8_0409.mat", "ANN_explore_H")
