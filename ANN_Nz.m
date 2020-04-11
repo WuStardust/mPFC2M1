@@ -13,9 +13,9 @@ ANN_explore_Nz = struct( ...
 M1Idx = 1; % select M1 neuron
 M1spikePart = M1spike(:,M1Idx);
 disp('~~~~~~~~~~~~~Start~~~~~~~~~~~~')
-tic
-for Nz=1:25
-parfor i=1:40
+% tic
+for Nz=5:25
+parfor i=1:30
   disp(['===============', datestr(datetime), '-', num2str(Nz), '-', num2str(i), '==============='])
   s=rng;
 %   Nz = getParamIndex(i);
@@ -36,12 +36,12 @@ parfor i=1:40
     "W",W, "L",L, "DBR",DBR, "Lval",Lval, "LHistory",LtrainHis, ...
     "LvalHis",LvalHis, "DBRtrainHis",DBRtrainHis, "DBRvalHis",DBRvalHis, "Whis",Whis ...
     );
-  if (i/10 == 0)
-    disp(['      Nz ', num2str(Nz, '%02d'), ' idx ', num2str(mod(i-1, repeatNum)+1, '%02d'), ' Lval ', num2str(Lval)])
-  end
+%   if (i/10 == 0)
+%     disp(['      Nz ', num2str(Nz, '%02d'), ' idx ', num2str(mod(i-1, repeatNum)+1, '%02d'), ' Lval ', num2str(Lval)])
+%   end
 end
 end
-toc
+% toc
 % for i=1:800
 %   [Nz,idx] = getParamIndex(i);
 %   ANN_explore_Nz(Nz, idx) = results{i};
