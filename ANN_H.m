@@ -21,7 +21,7 @@ for H=1:HSearchNum
 parfor i=1:repeatNum
   disp(['===============', datestr(datetime), '-', num2str(H), '-', num2str(i), '==============='])
   s=rng;
-  Nz = 10; % hidden neuron number
+  Nz = 6; % hidden neuron number
   xi1 = 0.1; % first stage weight parameters initial range param
   xi2 = 0.5; % second stage weight parameters initial range param
   mu = 1000; % modified LM algorithm param
@@ -48,4 +48,4 @@ disp('~~~~~~~~~~~~~End~~~~~~~~~~~~')
 %   idx = mod(i-1, repeatNum)+1;
 %   ANN_explore_H(H, idx) = results{i};
 % end
-save("results/ANN_explore_H_1.mat", "ANN_explore_H")
+save("results/ANN_explore_H_1_Nz_6.mat", "ANN_explore_H")
