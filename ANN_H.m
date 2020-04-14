@@ -13,15 +13,15 @@ ANN_explore_H = struct( ...
   );
 HSearchNum = 20;
 repeatNum = 30;
-M1Idx = 1; % select M1 neuron
+M1Idx = 3; % select M1 neuron
 M1spikePart = M1spike(:,M1Idx);
 disp('~~~~~~~~~~~~~Start~~~~~~~~~~~~')
 tic
-for H=1:HSearchNum
+for H=2:HSearchNum
 parfor i=1:repeatNum
   disp(['===============', datestr(datetime), '-', num2str(H), '-', num2str(i), '==============='])
   s=rng;
-  Nz = 6; % hidden neuron number
+  Nz = 10; % hidden neuron number
   xi1 = 0.1; % first stage weight parameters initial range param
   xi2 = 0.5; % second stage weight parameters initial range param
   mu = 1000; % modified LM algorithm param
@@ -48,4 +48,4 @@ disp('~~~~~~~~~~~~~End~~~~~~~~~~~~')
 %   idx = mod(i-1, repeatNum)+1;
 %   ANN_explore_H(H, idx) = results{i};
 % end
-save("results/ANN_explore_H_1_Nz_6.mat", "ANN_explore_H")
+save("results/ANN_explore_H_3_Nz_10.mat", "ANN_explore_H")
