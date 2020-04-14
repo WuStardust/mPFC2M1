@@ -17,7 +17,8 @@ disp('~~~~~~~~~~~~~Start~~~~~~~~~~~~')
 alphaList = [0, 0.01, 0.1, 0.5, 1, 3, 5, 10];
 for alphaInx=1:8
 parfor i=1:30
-  disp(['===============', datestr(datetime), '-', num2str(Nz), '-', num2str(i), '==============='])
+  alphaL = [0, 0.01, 0.1, 0.5, 1, 3, 5, 10];
+  disp(['===============', datestr(datetime), '-', num2str(alphaL(alphaInx)), '-', num2str(i), '==============='])
   s=rng;
   Nz = 6;
   H = 15; % temporal history, todo: grid search
@@ -27,7 +28,6 @@ parfor i=1:30
   thres = 1e-3; % stop error tolerance
   iterThres = 7; % stop after error over threshold $ times
   maxIter = 500; % max iteration num, over needs re-initial
-  alphaL = [0, 0.01, 0.1, 0.5, 1, 3, 5, 10];
   alpha = alphaL(alphaInx); % Regulization parameter
   splitFunc = @(history)splitDataAdvance(1,mPFCspike,M1spikePart,eventTrain,optimalDelay(M1Idx),segTrain,history);
   verbose = 2;
