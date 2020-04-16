@@ -13,7 +13,7 @@ ANN_explore_H = struct( ...
   );
 HSearchNum = 20;
 repeatNum = 30;
-M1Idx = 3; % select M1 neuron
+M1Idx = 2; % select M1 neuron
 M1spikePart = M1spike(:,M1Idx);
 disp('~~~~~~~~~~~~~Start~~~~~~~~~~~~')
 tic
@@ -27,7 +27,7 @@ parfor i=1:repeatNum
   mu = 1000; % modified LM algorithm param
   thres = 1e-3; % stop error tolerance
   iterThres = 7; % stop after error over threshold $ times
-  maxIter = 500; % max iteration num, over needs re-initial
+  maxIter = 1000; % max iteration num, over needs re-initial
   alpha = 0; % Regulization parameter
   splitFunc = @(history)splitDataAdvance(1,mPFCspike,M1spikePart,eventTrain,optimalDelay(M1Idx),segTrain,history);
   verbose = 2;
@@ -48,4 +48,4 @@ disp('~~~~~~~~~~~~~End~~~~~~~~~~~~')
 %   idx = mod(i-1, repeatNum)+1;
 %   ANN_explore_H(H, idx) = results{i};
 % end
-save("results/ANN_explore_H_3_Nz_10.mat", "ANN_explore_H")
+save("results/ANN_explore_H_2_Nz_10.mat", "ANN_explore_H")
