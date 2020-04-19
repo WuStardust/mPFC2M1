@@ -3,7 +3,7 @@ rng('default')
 addpath models\
 addpath utils\
 load("data/data_rat010_0615_spike_train_selected_with_delay.mat")
-M1Idx = 3; % select M1 neuron
+M1Idx = 2; % select M1 neuron
 %% GLM
 GLM_explore_H = struct( ...
   "H",{}, "xi",{}, "thres",{}, "iterThres",{}, ...
@@ -25,7 +25,7 @@ for H=1:20 % Temporal history. Explore within [1:10]
     "W",W, "L",L, "DBR",DBR, "Lval",Lval, "LHistory",LHistory ...
     );
 end
-save("results\GLM_explore_H_3.mat", "GLM_explore_H")
+% save("results\GLM_explore_H_2.mat", "GLM_explore_H")
 %% 2nd Order GLM
 GLM_sec_explore_H = struct( ...
   "H",{}, "xi",{}, "thres",{}, "iterThres",{}, "lagnum", {}, "lagalpha", {}, ...
@@ -63,7 +63,7 @@ for H=2:20
     "W",bestW, "L",bestL, "DBR",bestDBR ...
     );
 end
-save("results\GLM_sec_explore_H_3.mat", "GLM_sec_explore_H")
+% save("results\GLM_sec_explore_H_2.mat", "GLM_sec_explore_H")
 %% show results
 % load data; uncoment following lines when needed
 close all;clear;clc;
@@ -95,7 +95,7 @@ legend("GLM", "2nd-Order GLM")
 xlabel("Length of mPFC history(msec)")
 xlim([10 200])
 ylabel("DBR")
-ylim([0.95 1.4])
+ylim([1.2 1.6])
 title("DBR-history")
 
 H=20;
@@ -148,15 +148,15 @@ smoothedGLMLambdaPre = gaussianSmooth(GLMtrainLambdaYpre, kernelSize);
 smoothedGLMsecLambdaPre = gaussianSmooth(GLMsectrainLambdaYpre, kernelSize);
 
 % display results
-spikeLength = length(trainY);
-index = 1:spikeLength;
-t = index/100;
-% t = 55:0.01:100;
-% index = 5500:10000;
+% spikeLength = length(trainY);
+% index = 1:spikeLength;
+% t = index/100;
+t = 55:0.01:100;
+index = 5500:10000;
 figure("Name", "Train")
 subplot(4,1,1)
-area((1:length(trainEvent))/100, trainEvent)
-% area(t, trainEvent(index))
+% area((1:length(trainEvent))/100, trainEvent)
+area(t, trainEvent(index))
 % real spike
 subplot(4,1,2)
 area(t, trainY(index))
@@ -193,15 +193,15 @@ smoothedGLMLambdaPre = gaussianSmooth(GLMtestLambdaYpre, kernelSize);
 smoothedGLMsecLambdaPre = gaussianSmooth(GLMsectestLambdaYpre, kernelSize);
 
 % display results
-spikeLength = length(testY);
-index = 1:spikeLength;
-t = index/100;
-% t = 200:0.01:300;
-% index = 20000:30000;
+% spikeLength = length(testY);
+% index = 1:spikeLength;
+% t = index/100;
+t = 200:0.01:300;
+index = 20000:30000;
 figure("Name", "Test")
 subplot(4,1,1)
-area((1:length(testEvent))/100, testEvent)
-% area(t, testEvent(index))
+% area((1:length(testEvent))/100, testEvent)
+area(t, testEvent(index))
 % real spike
 subplot(4,1,2)
 area(t, testY(index))
