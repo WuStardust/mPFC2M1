@@ -46,8 +46,8 @@ for M1Idx=1:4
   end
   end
   ANN_neuron = squeeze(ANN_all_neurons(M1Idx,:,:));
-  save(['results/ANN_top_9_neurons_mPRC_8/', num2str(M1Idx), '.mat'], "ANN_neuron")
+  save(['results/ANN_top_9_neurons_mPFC_8/', num2str(M1Idx), '.mat'], "ANN_neuron")
 end
 toc
 disp('~~~~~~~~~~~~~End~~~~~~~~~~~~')
-save("results/ANN_top_9_neurons_mPRC_8.mat", "ANN_all_neurons")
+save("results/ANN_top_9_neurons_mPFC_8.mat", "ANN_all_neurons")
