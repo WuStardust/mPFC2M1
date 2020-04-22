@@ -3,7 +3,7 @@ close all;clear;clc;
 % rng('default')
 addpath models/
 addpath utils/
-load data/data_rat010_0615_spike_train_top_9.mat
+load data/data_rat010_0615_spike_train_top_9_mPFC_8.mat
 H = 20; % do not explore History
 %% ANN
 ANN_all_neurons = struct( ...
@@ -16,7 +16,7 @@ M1count = 9;
 repeatNum = 20;
 disp('~~~~~~~~~~~~~Start~~~~~~~~~~~~')
 tic
-for M1Idx=1:M1count
+for M1Idx=1:4
   disp(['++++++M1 Idx: ', num2str(M1Idx), '++++++'])
   % extract params
   M1No = M1index(M1Idx); % M1 neuron No.
@@ -25,7 +25,7 @@ for M1Idx=1:M1count
   delay = M1delay(M1Idx);
   for Nz=5:15
   parfor i=1:repeatNum
-    disp(['===============', datestr(datetime), '-', num2str(Nz), '-', num2str(i), '==============='])
+    disp(['===============', datestr(datetime), '-', num2str(M1Idx), '-', num2str(Nz), '-', num2str(i), '==============='])
     s=rng;
     xi1 = 0.1; % first stage weight parameters initial range param
     xi2 = 0.5; % second stage weight parameters initial range param
@@ -46,8 +46,8 @@ for M1Idx=1:M1count
   end
   end
   ANN_neuron = squeeze(ANN_all_neurons(M1Idx,:,:));
-  save(['results/ANN_top_9_neurons/', num2str(M1Idx), '.mat'], "ANN_neuron")
+  save(['results/ANN_top_9_neurons_mPRC_8/', num2str(M1Idx), '.mat'], "ANN_neuron")
 end
 toc
 disp('~~~~~~~~~~~~~End~~~~~~~~~~~~')
-save("results/ANN_top_9_neurons.mat", "ANN_all_neurons")
+save("results/ANN_top_9_neurons_mPRC_8.mat", "ANN_all_neurons")

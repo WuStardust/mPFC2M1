@@ -2,7 +2,7 @@ close all;clear;clc;
 rng('default')
 addpath models\
 addpath utils\
-load data\data_rat010_0615_spike_train_top_9.mat
+load data\data_rat010_0615_spike_train_top_9_mPFC_8.mat
 H = 20; % do not explore History
 %% GLM
 GLM_all_neurons = struct( ...
@@ -77,13 +77,13 @@ for M1Idx=1:9 % For each M1 neuron
     );
 end
 %% save results
-% save("results/baseline-top9-neurons.mat", "GLM_all_neurons", "GLM_sec_all_neurons");
+save("results/baseline-top9-neurons-mPFC-8.mat", "GLM_all_neurons", "GLM_sec_all_neurons");
 %% get statistical
 % load data; uncoment following lines when needed
 close all;clear;clc;
 addpath models/
-load data/data_rat010_0615_spike_train_top_9.mat
-load results/baseline-top9-neurons.mat
+load data/data_rat010_0615_spike_train_top_9_mPFC_8.mat
+load results/baseline-top9-neurons-mPFC-8.mat
 neurons_DBR = zeros(3, 9);
 for i=1:9
   neurons_DBR(1, i) = GLM_all_neurons(i).DBR;
@@ -136,10 +136,11 @@ h = figure("Name", "Neurons-DBR-cc");
 subplot(1,2,1)
 hold on
 bar(neurons_DBR');
-plot(0:0.01:9.2, ones(1, 921), 'k:')
+plot(0.5:0.01:9.3, ones(1, 881), 'k:')
 hold off
+xlim([0.5 9.3])
 subplot(1,2,2)
 bar(neurons_cc');
 legend("GLM", "2nd Order GLM", "Staged Point-Process Model", "Position",[0.5  0.95  0  0], "Box","off", "Orientation","horizontal")
-savefig(h, 'results/final/Neurons-DBR-cc.fig')
-save("results/DBRccStatistical.mat", "neurons_DBR", "neurons_cc")
+% savefig(h, 'results/final/models-DBR-cc-mPFC-8.fig')
+% save("results/DBRccStatistical-mPFC-8.mat", "neurons_DBR", "neurons_cc")
