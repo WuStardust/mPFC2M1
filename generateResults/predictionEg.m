@@ -16,18 +16,18 @@ M1Idx = GLM_explore_H(H).M1Idx;
 [~,~,~,trainX,~,testX,trainY,~,testY] = splitDataAdvance(1,mPFCspike,M1spike(:,M1Idx),eventTrain,optimalDelay(M1Idx),segTrain,H);
 GLMtestLambdaYpre = GLMmodel(testX(testIndex,:), W);
 GLMtrainLambdaYpre = GLMmodel(trainX(trainIndex,:),W);
-GLMccListTest = zeros(1, 1000/10);
-GLMccListTrain = zeros(1, 1000/10);
+GLMccListTest = zeros(1, 61);
+GLMccListTrain = zeros(1, 61);
 % smooth result
-for kernelSize=10:10:1000
+for kernelSize=0:0.5:30
   smoothedLambda    = gaussianSmooth(testY(testIndex), kernelSize);
   smoothedLambdaPre = gaussianSmooth(GLMtestLambdaYpre, kernelSize);
   cc = corrcoef(smoothedLambda, smoothedLambdaPre);
-  GLMccListTest(kernelSize/10) = cc(2);
+  GLMccListTest(2*(kernelSize+0.5)) = cc(2);
   smoothedLambda    = gaussianSmooth(trainY(trainIndex), kernelSize);
   smoothedLambdaPre = gaussianSmooth(GLMtrainLambdaYpre, kernelSize);
   cc = corrcoef(smoothedLambda, smoothedLambdaPre);
-  GLMccListTrain(kernelSize/10) = cc(2);
+  GLMccListTrain(2*(kernelSize+0.5)) = cc(2);
 end
 % 2nd Order GLM
 W     = GLM_sec_explore_H(H).W;
@@ -38,18 +38,18 @@ order = ['vm2-',num2str(lagnum),'-',num2str(lagalpha)];
 [~,~,~,trainX,~,testX,trainY,~,testY,trainEvent,~,testEvent] = splitDataAdvance(order,mPFCspike,M1spike(:,M1Idx),eventTrain,optimalDelay(M1Idx),segTrain,H);
 GLMsectestLambdaYpre = GLMmodel(testX(testIndex,:), W);
 GLMsectrainLambdaYpre = GLMmodel(trainX(trainIndex,:), W);
-GLM_sec_ccListTest = zeros(1, 1000/10);
-GLM_sec_ccListTrain = zeros(1, 1000/10);
+GLM_sec_ccListTest = zeros(1, 61);
+GLM_sec_ccListTrain = zeros(1, 61);
 % smooth
-for kernelSize=10:10:1000
+for kernelSize=0:0.5:30
   smoothedLambda    = gaussianSmooth(testY(testIndex), kernelSize);
   smoothedLambdaPre = gaussianSmooth(GLMsectestLambdaYpre, kernelSize);
   cc = corrcoef(smoothedLambda, smoothedLambdaPre);
-  GLM_sec_ccListTest(kernelSize/10) = cc(2);
+  GLM_sec_ccListTest(2*(kernelSize+0.5)) = cc(2);
   smoothedLambda    = gaussianSmooth(trainY(trainIndex), kernelSize);
   smoothedLambdaPre = gaussianSmooth(GLMsectrainLambdaYpre, kernelSize);
   cc = corrcoef(smoothedLambda, smoothedLambdaPre);
-  GLM_sec_ccListTrain(kernelSize/10) = cc(2);
+  GLM_sec_ccListTrain(2*(kernelSize+0.5)) = cc(2);
 end
 % ANN
 tmp = getFieldArray(ANN_explore_H, "DBR", H);
@@ -61,22 +61,22 @@ Nz    = ANN_explore_H(H,idx).Nz;
 [~, Nx] = size(testX);
 ANNtestLambdaYpre  = ANNmodel(testX(testIndex,:),  W, Nx, Nz);
 ANNtrainLambdaYpre = ANNmodel(trainX(trainIndex,:), W, Nx, Nz);
-ANNccListTest = zeros(1, 1000/10);
-ANNccListTrain = zeros(1, 1000/10);
+ANNccListTest = zeros(1, 61);
+ANNccListTrain = zeros(1, 61);
 % smooth
-for kernelSize=10:10:1000
+for kernelSize=0:0.5:30
   smoothedLambda    = gaussianSmooth(testY(testIndex), kernelSize);
   smoothedLambdaPre = gaussianSmooth(ANNtestLambdaYpre, kernelSize);
   cc = corrcoef(smoothedLambda, smoothedLambdaPre);
-  ANNccListTest(kernelSize/10) = cc(2);
+  ANNccListTest(2*(kernelSize+0.5)) = cc(2);
   smoothedLambda    = gaussianSmooth(trainY(trainIndex), kernelSize);
   smoothedLambdaPre = gaussianSmooth(ANNtrainLambdaYpre, kernelSize);
   cc = corrcoef(smoothedLambda, smoothedLambdaPre);
-  ANNccListTrain(kernelSize/10) = cc(2);
+  ANNccListTrain(2*(kernelSize+0.5)) = cc(2);
 end
 %% train
 % optimal smooth kernel size result
-kernelSize = 100;
+kernelSize = 10;
 smoothedLambda = gaussianSmooth(trainY(trainIndex), kernelSize);
 smoothedGLMLambdaPre = gaussianSmooth(GLMtrainLambdaYpre, kernelSize);
 smoothedGLMsecLambdaPre = gaussianSmooth(GLMsectrainLambdaYpre, kernelSize);
@@ -92,6 +92,7 @@ h = figure("Name", "Train");
 subplot(4,1,1)
 % area((1:length(trainEvent))/100, trainEvent)
 area(trainT, trainEvent(trainIndex))
+xlabel("time(sec)")
 % real spike
 subplot(4,1,2)
 area(trainT, trainY(trainIndex))
@@ -111,22 +112,22 @@ xlabel("time(sec)")
 ylabel("Firing rate")
 % cc analyze
 subplot(4,1,4)
-plot(0.1:0.1:10, GLMccListTrain, 'b')
+plot(0:5:300, GLMccListTrain, 'b')
 hold on
-plot(0.1:0.1:10, GLM_sec_ccListTrain, 'g')
-plot(0.1:0.1:10, ANNccListTrain, 'm');
+plot(0:5:300, GLM_sec_ccListTrain, 'g')
+plot(0:5:300, ANNccListTrain, 'm');
 hold off
-xlabel("kenel size(sec)")
-xlim([0 10])
+xlabel("kenel size(ms)")
+% xlim([0 10])
 ylabel("CC")
 title("CC-kernel size")
 legend([l{1}; l{2}; l{3}; l{4}], "Actual M1 spike", "GLM", "2nd-Order GLM", ...
   "Staged Point-Process Mode", "Position",[0.5  0.95  0  0], ...
   "Box","off", "Orientation","horizontal")
-savefig(h, ['results/final/trainEg-neuron-7-Nz-', num2str(Nz), '-H-', num2str(H), '.fig'])
+% savefig(h, ['results/final/trainEg-neuron-7-Nz-', num2str(Nz), '-H-', num2str(H), '.fig'])
 %% test
 % optimal smooth kernel size result
-kernelSize = 100;
+kernelSize = 10;
 smoothedLambda = gaussianSmooth(testY(testIndex), kernelSize);
 smoothedGLMLambdaPre = gaussianSmooth(GLMtestLambdaYpre, kernelSize);
 smoothedGLMsecLambdaPre = gaussianSmooth(GLMsectestLambdaYpre, kernelSize);
@@ -142,6 +143,7 @@ h = figure("Name", "Test");
 subplot(4,1,1)
 % area((1:length(testEvent))/100, testEvent)
 area(testT, testEvent(testIndex))
+xlabel("time(sec)")
 % real spike
 subplot(4,1,2)
 area(testT, testY(testIndex))
@@ -160,19 +162,19 @@ xlabel("time(sec)")
 ylabel("Firing rate")
 % cc analyze
 subplot(4,1,4)
-plot(0.1:0.1:10, GLMccListTest, 'b')
+plot(0:5:300, GLMccListTest, 'b')
 hold on
-plot(0.1:0.1:10, GLM_sec_ccListTest, 'g')
-plot(0.1:0.1:10, ANNccListTest, 'm');
+plot(0:5:300, GLM_sec_ccListTest, 'g')
+plot(0:5:300, ANNccListTest, 'm');
 hold off
-xlabel("kenel size(sec)")
-xlim([0 10])
+xlabel("kenel size(ms)")
+% xlim([0 10])
 ylabel("CC")
 title("CC-kernel size")
 legend([l{1}; l{2}; l{3}; l{4}], "Actual M1 spike", "GLM", "2nd-Order GLM", ...
   "Staged Point-Process Model", "Position",[0.5  0.95  0  0], ...
   "Box","off", "Orientation","horizontal")
-savefig(h, ['results/final/testEg-neuron-7-Nz-', num2str(Nz), '-H-', num2str(H), '.fig'])
+% savefig(h, ['results/final/testEg-neuron-7-Nz-', num2str(Nz), '-H-', num2str(H), '.fig'])
 %% DBR
 opt.DTCorrelation = 1;
 opt.sampleRate = 100;
@@ -191,4 +193,4 @@ plot(0:0.001:1-bound, bound:0.001:1, 'k:')
 hold off
 legend("GLM", "2nd-Order GLM", "Staged Point-Process Model", "Position",[0.5  0.95  0  0], "Box","off", "Orientation","horizontal")
 % title("neuron 7 ks plot")
-savefig(h, "results/final/DBREg.fig")
+% savefig(h, "results/final/DBREg.fig")
